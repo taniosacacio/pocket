@@ -24,6 +24,43 @@
     els.forEach(function (el) { io.observe(el); });
   } else { els.forEach(function (el) { el.classList.add('in'); }); }
 
+  // Revelação progressiva e temporizada das etapas em #como-funciona (1 -> 2 -> 3 -> 4)
+  var secComoFunciona = document.getElementById('como-funciona');
+  var stepsFocus = Array.prototype.slice.call(document.querySelectorAll('.step--focus'));
+  if (stepsFocus.length && secComoFunciona && 'IntersectionObserver' in window) {
+    var stepTimerTriggered = false;
+    var stepTimers = [];
+
+    function iniciarSequenciaEtapas() {
+      if (stepTimerTriggered) return;
+      stepTimerTriggered = true;
+      if (stepsFocus[0]) stepsFocus[0].classList.add('is-active');
+      stepTimers.push(setTimeout(function () {
+        if (stepsFocus[1]) stepsFocus[1].classList.add('is-active');
+      }, 1600));
+      stepTimers.push(setTimeout(function () {
+        if (stepsFocus[2]) stepsFocus[2].classList.add('is-active');
+      }, 3200));
+      stepTimers.push(setTimeout(function () {
+        if (stepsFocus[3]) stepsFocus[3].classList.add('is-active');
+      }, 4800));
+    }
+
+    var comoObserver = new IntersectionObserver(function (entries) {
+      if (entries[0].isIntersecting) {
+        iniciarSequenciaEtapas();
+      }
+    }, { threshold: 0.22 });
+    comoObserver.observe(secComoFunciona);
+
+    stepsFocus.forEach(function (step) {
+      step.addEventListener('click', function () { step.classList.add('is-active'); });
+      step.addEventListener('mouseenter', function () { step.classList.add('is-active'); });
+    });
+  } else {
+    stepsFocus.forEach(function (step) { step.classList.add('is-active'); });
+  }
+
   // Abas acessíveis (setas do teclado) — cada grupo .tabs funciona de forma independente
   Array.prototype.slice.call(document.querySelectorAll('.tabs:not([data-own])')).forEach(function (grupo) {
     var tabs = Array.prototype.slice.call(grupo.querySelectorAll('.tab'));

@@ -39,6 +39,21 @@ a{color:inherit}
 .btn--ghost:hover{background:rgba(255,255,255,.06);box-shadow:none}
 .link{color:var(--tx);font-weight:600;text-decoration:none;min-height:44px;display:inline-flex;align-items:center}
 .link:hover{color:var(--ac2)}
+.link--timer{display:inline-flex;align-items:center;gap:10px;text-decoration:none;font-weight:600}
+.btn--timer{gap:10px}
+.btn--timer .timer-ico{color:inherit}
+.timer-ico{display:inline-flex;align-items:center;justify-content:center;color:var(--cta);line-height:1}
+.timer-ico svg{display:block}
+.timer-ico__hand{transform-origin:12px 12px;animation:spinMinute 4s linear infinite}
+@keyframes spinMinute{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+@media(prefers-reduced-motion:reduce){.timer-ico__hand{animation:none}}
+
+/* Marca d'água grande e transparente do WhatsApp no fundo da 1ª dobra */
+.hero__bg-wa{position:absolute;top:50%;right:-20px;transform:translateY(-50%);width:min(640px,90vw);height:min(640px,90vw);color:#25D366;opacity:.042;pointer-events:none;z-index:0}
+.hero__bg-wa svg{width:100%;height:100%}
+@media(max-width:899px){
+  .hero__bg-wa{right:50%;transform:translate(50%,-50%);opacity:.032}
+}
 
 /* Type */
 h1{font-size:clamp(28px,4.4vw,46px);line-height:1.12;letter-spacing:-.03em;font-weight:800;margin:18px 0}
@@ -137,17 +152,65 @@ p{color:var(--mut)}
 .tag--b{color:#7CC8FF;border-color:#7CC8FF55;background:#7CC8FF14}
 .step h3{letter-spacing:.04em;font-size:18px}
 
+/* Efeito de revelação progressiva das etapas */
+.step--focus{
+  opacity:0.25;
+  filter:blur(0.4px);
+  transform:translateY(6px);
+  transition:opacity .5s cubic-bezier(.2,.8,.2,1), filter .5s cubic-bezier(.2,.8,.2,1), transform .5s cubic-bezier(.2,.8,.2,1);
+}
+.step--focus.is-active{
+  opacity:1;
+  filter:none;
+  transform:none;
+}
+.step--focus:hover{
+  opacity:0.85;
+  filter:none;
+}
+
+/* Destaques da terceira dobra (Pilares) */
+.pilares__proof{
+  list-style:none;
+  display:grid;
+  gap:20px;
+  margin-top:40px;
+  padding:24px 28px;
+  border-radius:var(--r);
+  background:var(--glass);
+  border:1px solid var(--glass-brd);
+  backdrop-filter:blur(16px);
+  -webkit-backdrop-filter:blur(16px);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.12);
+}
+.pilares__proof li{display:flex;flex-direction:column;gap:4px}
+.pilares__proof strong{font-size:24px;letter-spacing:-.02em;background:linear-gradient(90deg,var(--tx),var(--ac2));-webkit-background-clip:text;background-clip:text;color:transparent}
+.pilares__proof span{font-size:14px;color:var(--mut)}
+@media(min-width:768px){
+  .pilares__proof{grid-template-columns:repeat(3,1fr);gap:32px;align-items:center}
+}
+
 /* Emojis animados dos passos */
-.emo-row{display:flex;align-items:center;gap:10px;margin:2px 0 12px}
+.emo-row{display:inline-flex;align-items:center;gap:10px;margin:2px 0 12px}
 .emo{display:grid;place-items:center;width:60px;height:60px;font-size:32px;line-height:1;border-radius:18px;background:var(--glass);border:1px solid var(--glass-brd);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);box-shadow:inset 0 1px 0 rgba(255,255,255,.14),0 10px 26px rgba(0,0,0,.3)}
-.emo--doc{position:relative}
+
+/* Etapa 1: Robô no centro, documento desliza de trás para o lado */
+.emo-row--briefing{position:relative}
+.emo--robot{position:relative;z-index:2;transition:transform .8s cubic-bezier(.34,1.4,.64,1)}
+.emo-row--briefing .emo--doc{position:relative;z-index:1;transition:transform .85s cubic-bezier(.34,1.4,.64,1),opacity .6s ease}
+.step:not(.is-active) .emo-row--briefing .emo--robot{transform:translateX(35px)}
+.step:not(.is-active) .emo-row--briefing .emo--doc{transform:translateX(-50px) scale(.7);opacity:0;pointer-events:none}
+.step.is-active .emo-row--briefing .emo--robot{transform:translateX(0)}
+.step.is-active .emo-row--briefing .emo--doc{transform:translateX(0) scale(1);opacity:1}
+
 /* Documento: carimbos alternam a cada 3s (aprovado, negativado, teste A/B) */
 .stamp{position:absolute;opacity:0;z-index:2;line-height:1;animation:stampCycle 9s infinite;pointer-events:none}
 .stamp--ok{font-size:28px;right:-10px;bottom:-10px}
 .stamp--no{font-size:28px;right:-10px;bottom:-10px;animation-delay:3s}
 .stamp--ab{right:-26px;bottom:-8px;padding:4px 8px;border-radius:8px;background:#FFD76A;color:#3a2a00;font-size:11px;font-weight:800;letter-spacing:.04em;white-space:nowrap;box-shadow:0 6px 16px rgba(255,215,106,.4);animation-delay:6s;--rot:-8deg}
 @keyframes stampCycle{0%{opacity:0;transform:scale(.3) rotate(-16deg)}3%{opacity:1;transform:scale(1.2) rotate(var(--rot,-6deg))}6%{transform:scale(1) rotate(var(--rot,-6deg))}30%{opacity:1;transform:scale(1) rotate(var(--rot,-6deg))}33%,100%{opacity:0;transform:scale(.8) rotate(var(--rot,-6deg))}}
-/* Varredura: computador parado, vassoura passa na frente e apaga os "dados" */
+
+/* Etapa 2: Varredura mantida intacta */
 .emo--sweep{position:relative;width:96px;overflow:hidden}
 .emo--sweep .pc{font-size:34px}
 .bit{position:absolute;top:18px;width:9px;height:6px;border-radius:2px;background:var(--ac2);opacity:0;animation:bitSweep 3s infinite}
@@ -155,9 +218,18 @@ p{color:var(--mut)}
 .broom{position:absolute;bottom:4px;left:50%;margin-left:-14px;font-size:26px;z-index:2;opacity:0;animation:broomPass 3s ease-in-out infinite;transform-origin:50% 90%}
 @keyframes broomPass{0%{transform:translateX(-40px) rotate(-18deg);opacity:0}10%{opacity:1}80%{transform:translateX(40px) rotate(18deg);opacity:1}90%,100%{transform:translateX(40px) rotate(18deg);opacity:0}}
 @keyframes bitSweep{0%{opacity:0}6%{opacity:1;transform:none}28%{opacity:1;transform:none}36%{opacity:0;transform:translateX(14px)}100%{opacity:0}}
-/* Especialistas: cores do Google percorrem os ícones (azul, vermelho, amarelo, verde) */
-.emo--scan{animation:googleGlow 8s linear infinite}
-.emo--scan:nth-child(2){animation-delay:-2.7s}.emo--scan:nth-child(3){animation-delay:-5.4s}
+
+/* Etapa 3: Computador no meio, especialistas surgem de trás deslizando */
+.emo-row--team{position:relative}
+.emo--screen{position:relative;z-index:2;animation:googleGlow 8s linear infinite}
+.emo--expert{position:relative;z-index:1;transition:transform .85s cubic-bezier(.34,1.4,.64,1),opacity .6s ease;animation:googleGlow 8s linear infinite}
+.emo--expert-left{animation-delay:-2.7s}
+.emo--expert-right{animation-delay:-5.4s}
+.step:not(.is-active) .emo--expert-left{transform:translateX(50px) scale(.65);opacity:0;pointer-events:none}
+.step:not(.is-active) .emo--expert-right{transform:translateX(-50px) scale(.65);opacity:0;pointer-events:none}
+.step.is-active .emo--expert-left{transform:translateX(0) scale(1);opacity:1}
+.step.is-active .emo--expert-right{transform:translateX(0) scale(1);opacity:1}
+
 @keyframes googleGlow{
   0%,100%{border-color:rgba(66,133,244,.95);background:rgba(66,133,244,.16);box-shadow:inset 0 1px 0 rgba(255,255,255,.14),0 0 24px rgba(66,133,244,.55)}
   25%{border-color:rgba(234,67,53,.95);background:rgba(234,67,53,.16);box-shadow:inset 0 1px 0 rgba(255,255,255,.14),0 0 24px rgba(234,67,53,.55)}
@@ -265,7 +337,11 @@ input:focus,select:focus{outline:none;border-color:var(--ac2);box-shadow:0 0 0 4
 }
 @media(min-width:960px){
   .nav{display:flex}
-  .hero__grid{grid-template-columns:1.2fr .8fr}
+  .hero{padding:calc(130px + env(safe-area-inset-top)) 0 100px}
+  .hero__grid{grid-template-columns:1.25fr .75fr;gap:68px;align-items:center}
+  .hero__text h1{font-size:clamp(35px,3.8vw,48px);line-height:1.24;margin-bottom:32px;letter-spacing:-.025em}
+  .hero__text .lead{margin-top:0;margin-bottom:34px;font-size:20px;line-height:1.6;max-width:580px}
+  .hero__cta{margin-top:32px}
   .grid--4{grid-template-columns:repeat(4,1fr)}
   .dash__grid{grid-template-columns:1fr 1fr}
   .steps{grid-template-columns:repeat(4,1fr);gap:24px}
@@ -297,6 +373,13 @@ input:focus,select:focus{outline:none;border-color:var(--ac2);box-shadow:0 0 0 4
 .tab--ico{display:inline-flex;align-items:center;gap:8px}
 .tab:disabled{cursor:not-allowed;opacity:.8}
 .tab__soon{font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:2px 8px;border-radius:99px;background:rgba(255,255,255,.1);color:var(--mut)}
+
+/* Abas de mercado integradas logo acima da busca */
+.tabs--sim{display:inline-flex;align-items:center;gap:6px;padding:4px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.12);border-radius:14px;margin-bottom:12px;width:fit-content}
+.tabs--sim .tab{min-height:38px;padding:0 16px;border-radius:10px;font-size:13.5px}
+.tab--ghost{opacity:.35!important;font-size:12.5px!important;padding:0 10px!important;min-height:34px!important;background:transparent!important;border:1px dashed rgba(255,255,255,.15)!important;color:var(--mut)!important}
+.tab--ghost .tab__soon{font-size:9.5px;padding:1px 6px;opacity:.7}
+
 .simview{position:relative;display:grid;gap:36px;align-items:center}
 .simleft{display:flex;flex-direction:column;gap:22px;max-width:520px}
 .simkicker{font-size:15px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--tx);line-height:1.5}
@@ -358,6 +441,43 @@ input:focus,select:focus{outline:none;border-color:var(--ac2);box-shadow:0 0 0 4
   .simsteps{margin-top:8px}
 }
 @media(max-width:899px){
-  .simleft{max-width:560px;margin:0 auto}
-  .simsteps{max-width:560px}
+  #simulacao .section__head{margin-bottom:24px}
+  .tabs--sim{order:-2;margin:0 auto 4px}
+  .simview{grid-template-columns:1fr;gap:14px;max-width:480px;margin:0 auto}
+  .simleft{max-width:100%;margin:0 auto;gap:10px}
+  .simkicker{font-size:12px;text-align:center;letter-spacing:.08em;margin-bottom:0}
+  
+  /* Veredito posicionado acima da busca: elimina o vão fantasma e impede que a seta cubra o texto */
+  .simverdict{order:-1;min-height:42px;font-size:13px;line-height:1.35;align-items:center;text-align:center;gap:6px;margin:0 auto}
+  .verdict{font-size:11px;padding:4px 10px}
+  
+  /* Caixa do Google compacta */
+  .simbox{padding:12px 14px 14px;border-radius:18px}
+  .simsearch__logo{font-size:20px;margin-bottom:8px;text-align:center}
+  .simsearch__bar{min-height:42px;padding:0 14px;gap:8px}
+  .simsearch__text{font-size:14px}
+  .simsearch__bar svg{width:18px;height:18px}
+  .simsearch__caret{height:18px}
+
+  /* Palco e celular proporcionais ao viewport mobile (iPhone 15) para caber na mesma dobra */
+  .simstage{min-height:auto;padding:4px 0}
+  .simstage__glow{width:220px;height:220px;filter:blur(24px)}
+  .simphone-wrap{width:min(290px,82vw);margin:0 auto}
+  .simphone{min-height:auto;border-width:6px;border-radius:36px;padding:10px 10px 14px;box-shadow:0 24px 60px rgba(18,140,126,.28)}
+  .simphone .phone__notch{width:70px;height:18px;margin:0 auto 8px}
+  .simphone .phone__bar{padding:6px 6px 8px;gap:8px}
+  .simphone .avatar{width:28px;height:28px}
+  .simphone .phone__bar b{font-size:13px}
+  .simphone .phone__bar small{font-size:11px}
+  .simphone .chat{gap:8px;padding-top:8px}
+  .simphone .msg{padding:7px 10px;font-size:12px;line-height:1.35;border-radius:12px}
+  .simphone .msg--mkt{font-size:11px;padding:4px 10px}
+  .simphone .poll{padding:9px 10px;font-size:12px;border-radius:12px}
+  .simphone .poll p{font-size:12px;margin-bottom:6px}
+  .simphone .opt{padding:6px 8px;font-size:11.5px;margin-top:5px;border-radius:8px;gap:8px}
+  .simphone .opt i{width:13px;height:13px}
+
+  .simsteps{max-width:320px;margin:12px auto 0;gap:8px}
+  .simstep{height:18px;padding:7px 0}
+  .sim__cta{margin-top:24px}
 }
