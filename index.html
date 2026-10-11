@@ -132,6 +132,96 @@
       </div>
     </section>
 
+    <!-- 5b. SIMULAÇÃO ESTÁTICA -->
+    <section class="section" id="simulacao">
+      <div class="container">
+        <header class="section__head reveal">
+          <h2>Teste o raciocínio do Pocket</h2>
+          <p>Escolha um mercado e veja como a IA classifica cada busca. Exemplos ilustrativos.</p>
+        </header>
+
+        <div class="tabs" role="tablist" aria-label="Mercados">
+          <button role="tab" id="tab-imob" aria-selected="true" aria-controls="p-imob" class="tab">Imóveis de luxo</button>
+          <button role="tab" id="tab-pet" aria-selected="false" aria-controls="p-pet" class="tab" tabindex="-1">Pet shop</button>
+          <button role="tab" id="tab-soft" aria-selected="false" aria-controls="p-soft" class="tab" tabindex="-1">Software B2B</button>
+        </div>
+
+        <div class="sim" id="p-imob" role="tabpanel" aria-labelledby="tab-imob">
+          <div class="grid grid--3">
+            <article class="card">
+              <p class="micro micro--left">Termo pesquisado</p>
+              <h3 class="sim__term">“decorador para apartamento de luxo”</h3>
+              <p class="verdict verdict--r">Negativar</p>
+              <p>Busca por serviço, não por compra de imóvel. Clique desperdiçado.</p>
+            </article>
+            <article class="card">
+              <p class="micro micro--left">Termo pesquisado</p>
+              <h3 class="sim__term">“investimento imobiliário alto rendimento”</h3>
+              <p class="verdict verdict--y">Dúvida · testar</p>
+              <p>Pode ser fundo imobiliário ou compra direta. A pergunta vai para o WhatsApp para qualificar.</p>
+            </article>
+            <article class="card">
+              <p class="micro micro--left">Termo pesquisado</p>
+              <h3 class="sim__term">“cobertura duplex comprar”</h3>
+              <p class="verdict verdict--g">Relevante</p>
+              <p>Intenção clara de compra. Manter e otimizar o lance.</p>
+            </article>
+          </div>
+        </div>
+
+        <div class="sim" id="p-pet" role="tabpanel" aria-labelledby="tab-pet" hidden>
+          <div class="grid grid--3">
+            <article class="card">
+              <p class="micro micro--left">Termo pesquisado</p>
+              <h3 class="sim__term">“curso de banho e tosa”</h3>
+              <p class="verdict verdict--r">Negativar</p>
+              <p>Quem busca curso quer aprender a profissão, não comprar no pet shop.</p>
+            </article>
+            <article class="card">
+              <p class="micro micro--left">Termo pesquisado</p>
+              <h3 class="sim__term">“veterinário 24 horas”</h3>
+              <p class="verdict verdict--y">Dúvida · testar</p>
+              <p>Depende de a loja ter atendimento veterinário. O Pocket pergunta no WhatsApp antes de decidir.</p>
+            </article>
+            <article class="card">
+              <p class="micro micro--left">Termo pesquisado</p>
+              <h3 class="sim__term">“ração premium para cachorro comprar”</h3>
+              <p class="verdict verdict--g">Relevante</p>
+              <p>Intenção clara de compra de produto. Manter e otimizar o lance.</p>
+            </article>
+          </div>
+        </div>
+
+        <div class="sim" id="p-soft" role="tabpanel" aria-labelledby="tab-soft" hidden>
+          <div class="grid grid--3">
+            <article class="card">
+              <p class="micro micro--left">Termo pesquisado</p>
+              <h3 class="sim__term">“planilha de controle financeiro grátis”</h3>
+              <p class="verdict verdict--r">Negativar</p>
+              <p>Quer solução gratuita e caseira, longe de contratar um software pago.</p>
+            </article>
+            <article class="card">
+              <p class="micro micro--left">Termo pesquisado</p>
+              <h3 class="sim__term">“sistema ERP para pequena empresa”</h3>
+              <p class="verdict verdict--y">Dúvida · testar</p>
+              <p>Pode ser um negócio dentro do perfil ou pequeno demais. O WhatsApp qualifica o porte.</p>
+            </article>
+            <article class="card">
+              <p class="micro micro--left">Termo pesquisado</p>
+              <h3 class="sim__term">“software de gestão para clínicas orçamento”</h3>
+              <p class="verdict verdict--g">Relevante</p>
+              <p>Busca com intenção de compra e nicho definido. Manter e otimizar o lance.</p>
+            </article>
+          </div>
+        </div>
+
+        <div class="center sim__cta reveal">
+          <p>Quer ver uma simulação com os dados do seu site?</p>
+          <a href="#demo" class="btn btn--sm">Solicitar análise personalizada</a>
+        </div>
+      </div>
+    </section>
+
     <!-- 6. DIFERENCIAIS -->
     <section class="section" id="diferenciais">
       <div class="container">

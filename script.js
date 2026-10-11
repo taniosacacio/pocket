@@ -24,22 +24,24 @@
     els.forEach(function (el) { io.observe(el); });
   } else { els.forEach(function (el) { el.classList.add('in'); }); }
 
-  // Abas acessíveis (setas do teclado)
-  var tabs = Array.prototype.slice.call(document.querySelectorAll('.tab'));
-  function selecionar(tab) {
-    tabs.forEach(function (t) {
-      var on = t === tab;
-      t.setAttribute('aria-selected', on);
-      t.tabIndex = on ? 0 : -1;
-      document.getElementById(t.getAttribute('aria-controls')).hidden = !on;
-    });
-    tab.focus();
-  }
-  tabs.forEach(function (t, i) {
-    t.addEventListener('click', function () { selecionar(t); });
-    t.addEventListener('keydown', function (e) {
-      if (e.key === 'ArrowRight') selecionar(tabs[(i + 1) % tabs.length]);
-      if (e.key === 'ArrowLeft') selecionar(tabs[(i - 1 + tabs.length) % tabs.length]);
+  // Abas acessíveis (setas do teclado) — cada grupo .tabs funciona de forma independente
+  Array.prototype.slice.call(document.querySelectorAll('.tabs')).forEach(function (grupo) {
+    var tabs = Array.prototype.slice.call(grupo.querySelectorAll('.tab'));
+    function selecionar(tab) {
+      tabs.forEach(function (t) {
+        var on = t === tab;
+        t.setAttribute('aria-selected', on);
+        t.tabIndex = on ? 0 : -1;
+        document.getElementById(t.getAttribute('aria-controls')).hidden = !on;
+      });
+      tab.focus();
+    }
+    tabs.forEach(function (t, i) {
+      t.addEventListener('click', function () { selecionar(t); });
+      t.addEventListener('keydown', function (e) {
+        if (e.key === 'ArrowRight') selecionar(tabs[(i + 1) % tabs.length]);
+        if (e.key === 'ArrowLeft') selecionar(tabs[(i - 1 + tabs.length) % tabs.length]);
+      });
     });
   });
 

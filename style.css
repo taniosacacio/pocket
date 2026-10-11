@@ -279,3 +279,16 @@ input:focus,select:focus{outline:none;border-color:var(--ac2);box-shadow:0 0 0 4
   .reveal{opacity:1;transform:none}
   .bars i{transform:none}
 }
+
+/* Simulação estática */
+.sim[hidden]{display:none}
+.sim .card{display:flex;flex-direction:column;gap:10px}
+.sim .card p{font-size:15px}
+.sim__term{font-size:19px;line-height:1.35;color:var(--tx)}
+.verdict{align-self:flex-start;display:inline-flex;align-items:center;gap:8px;padding:6px 14px;border-radius:99px;font-size:13px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;border:1px solid currentColor;background:rgba(255,255,255,.04)}
+.verdict::before{content:"";width:8px;height:8px;border-radius:50%;background:currentColor}
+.verdict--g{color:#25D366}
+.verdict--y{color:#FFD76A}
+.verdict--r{color:#FF8A8A}
+.sim__cta{margin-top:40px}
+.sim__cta p{margin-bottom:14px}
