@@ -10,7 +10,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <script>if(/\/lppocket$/.test(location.pathname))location.replace(location.pathname+'/'+location.search+location.hash)</script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css?v=1791726804">
+  <link rel="stylesheet" href="style.css?v=1791727364">
 </head>
 <body>
   <a class="skip" href="#conteudo">Pular para o conteúdo</a>
@@ -158,7 +158,14 @@
         <div class="simview" id="sim-view" role="tabpanel" aria-labelledby="tab-imob">
           <div class="simleft" id="simleft">
             <p class="simkicker">As pessoas no Google estão buscando por:</p>
-            <div class="simbox" id="simbox"><span class="simbox__term" id="simterm"></span></div>
+            <div class="simbox" id="simbox">
+              <div class="simsearch__logo" aria-hidden="true"><span class="gads"><span class="gads__g">G</span><span class="gads__o1">o</span><span class="gads__o2">o</span><span class="gads__g">g</span><span class="gads__l">l</span><span class="gads__e">e</span></span></div>
+              <div class="simsearch__bar">
+                <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#5F6368" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+                <span class="simsearch__text"><span id="simterm"></span><i class="simsearch__caret"></i></span>
+                <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#4285F4" stroke-width="2" stroke-linecap="round" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg>
+              </div>
+            </div>
             <div class="simverdict" id="simverdict" aria-live="polite"></div>
           </div>
 
@@ -287,7 +294,7 @@
   </footer>
 
   <div class="sticky" id="sticky"><a href="#demo" class="btn btn--block">Agendar demonstração</a></div>
-  <script src="network.js?v=1791726804"></script>
-  <script src="script.js?v=1791726804"></script>
+  <script src="network.js?v=1791727364"></script>
+  <script src="script.js?v=1791727364"></script>
 </body>
 </html>

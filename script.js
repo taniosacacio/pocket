@@ -152,11 +152,11 @@
     ciclo();
   }
 
-  // Simulação automática (aba Imóveis de luxo): um exemplo por vez, 7 s cada, celular estático
+  // Simulação automática (aba Imóveis de luxo): um exemplo por vez, 10 s cada, celular estático
   var simPhone = document.getElementById('simphone');
   var simBox = document.getElementById('simbox');
   if (simPhone && simBox) {
-    var SIM_MS = 7000;
+    var SIM_MS = 10000;
     var simMercado = 'Imóveis de luxo';
     var simItens = [
       { termo: 'decorador para apartamento de luxo', clique: 1, resp: '✓ PERDA. Termo negativado.', cls: 'r', rot: 'Negativar', why: 'Busca por serviço, não por compra de imóvel. Clique desperdiçado.' },
@@ -178,18 +178,18 @@
     var simAtual = 0, simTimers = [], simVisivel = false, simClassificado = false;
     var simReduz = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-    function simPinta(i, marcado, resposta) {
+    function simPinta(i, marcado, resposta, vazio) {
       var c = simItens[i];
       var h = '<div class="phone__notch"></div>' +
         '<div class="phone__bar"><span class="avatar"><img src="assets/whatsapp-logo.jpg" alt=""></span><div><b>Grupo do cliente</b><small>Pocket · online</small></div></div>' +
         '<div class="chat' + (marcado >= 0 ? ' chat--still' : '') + '">' +
         '<div class="msg msg--mkt">' + simMercado + '</div>' +
-        '<div class="msg msg--in">Termo que acionou seu anúncio:<br>“<b>' + c.termo + '</b>”</div>' +
-        '<div class="poll"><p>Como classificar este termo?</p>';
-      simOpts.forEach(function (o, k) {
+        (vazio ? '' : '<div class="msg msg--in">Termo que acionou seu anúncio:<br>“<b>' + c.termo + '</b>”</div>' +
+        '<div class="poll"><p>Como classificar este termo?</p>');
+      if (!vazio) simOpts.forEach(function (o, k) {
         h += '<label class="opt ' + o.cls + (marcado === k ? ' opt--on' : '') + '"><i></i>' + o.rotulo + '</label>';
       });
-      h += '</div>' + (resposta ? '<div class="msg msg--ok">' + c.resp + '</div>' : '') + '</div>';
+      h += (vazio ? '' : '</div>') + (resposta ? '<div class="msg msg--ok">' + c.resp + '</div>' : '') + '</div>';
       simPhone.innerHTML = h;
     }
     // Seta pontilhada: da caixa do termo até a opção marcada no celular
@@ -207,10 +207,10 @@
       simSvg.setAttribute('data-c', simItens[simAtual].cls);
       simSvg.classList.add('is-on');
     }
-    function simTexto(i, classificado) {
+    function simTexto(i, classificado, txt, digitando) {
       var c = simItens[i];
-      simTerm.textContent = c.termo;
-      simBox.className = 'simbox' + (classificado ? ' simbox--' + c.cls : '');
+      simTerm.textContent = (txt == null) ? c.termo : txt;
+      simBox.className = 'simbox' + (classificado ? ' simbox--' + c.cls : '') + (digitando ? ' is-typing' : '');
       simVerdict.innerHTML = classificado
         ? '<span class="verdict verdict--' + c.cls + '">' + c.rot + '</span><span>' + c.why + '</span>' : '';
       simVerdict.classList.toggle('is-on', !!classificado);
@@ -221,8 +221,8 @@
         b.classList.toggle('is-active', k === i);
         if (k === i) b.setAttribute('aria-current', 'true'); else b.removeAttribute('aria-current');
         f.style.animation = 'none';
-        f.style.width = (k < i || (k === i && !anima)) ? '100%' : '0';
-        if (k === i && anima) { void f.offsetWidth; f.style.width = ''; f.style.animation = 'simfill ' + SIM_MS + 'ms linear forwards'; }
+        f.style.clipPath = (k < i || (k === i && !anima)) ? 'inset(0 0 0 0)' : 'inset(0 100% 0 0)';
+        if (k === i && anima) { void f.offsetWidth; f.style.clipPath = ''; f.style.animation = 'simfill ' + SIM_MS + 'ms linear forwards'; }
       });
     }
     function simLimpa() { simTimers.forEach(clearTimeout); simTimers = []; }
@@ -231,19 +231,27 @@
       simLimpa();
       var c = simItens[simAtual];
       simClassificado = false;
-      simPinta(simAtual, -1, false); simTexto(simAtual, false); simSeta(false);
       if (simReduz) {
         simPinta(simAtual, c.clique, true); simTexto(simAtual, true); simClassificado = true; simBarras(simAtual, false);
         requestAnimationFrame(function () { simSeta(true); });
         return;
       }
+      simPinta(simAtual, -1, false, true); simTexto(simAtual, false, '', true); simSeta(false);
       simBarras(simAtual, true);
-      simLater(function () {                       // 2 s: a IA classifica
+      var n = c.termo.length, passo = 2600 / n;
+      for (var k = 1; k <= n; k++) {               // 0,5 s a 3,1 s: a pessoa digita no Google
+        (function (k) { simLater(function () { simTerm.textContent = c.termo.slice(0, k); }, 500 + k * passo); })(k);
+      }
+      simLater(function () {                       // 3,5 s: Enter, o termo chega ao WhatsApp
+        simTexto(simAtual, false, c.termo, false);
+        simPinta(simAtual, -1, false);
+      }, 3500);
+      simLater(function () {                       // 5,5 s: a IA classifica
         simClassificado = true;
         simPinta(simAtual, c.clique, false); simTexto(simAtual, true); simSeta(true);
-      }, 2000);
-      simLater(function () { simPinta(simAtual, c.clique, true); }, 3200);   // resposta do bot
-      simLater(function () {                       // 7 s: próximo exemplo
+      }, 5500);
+      simLater(function () { simPinta(simAtual, c.clique, true); }, 6700);   // resposta do bot
+      simLater(function () {                       // 10 s: próximo exemplo
         simAtual = (simAtual + 1) % simItens.length;
         simCiclo();
       }, SIM_MS);
@@ -261,7 +269,7 @@
         if (simVisivel) simCiclo(); else simLimpa();
       }, { threshold: 0.25 }).observe(simSec);
     } else { simVisivel = true; simCiclo(); }
-    simPinta(0, -1, false); simTexto(0, false); simBarras(0, false);
+    simPinta(0, -1, false, true); simTexto(0, false, '', true); simBarras(0, false);
   }
 
   // Gráfico do painel anima ao entrar na tela
