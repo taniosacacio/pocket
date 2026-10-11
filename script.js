@@ -25,7 +25,7 @@
   } else { els.forEach(function (el) { el.classList.add('in'); }); }
 
   // Abas acessíveis (setas do teclado) — cada grupo .tabs funciona de forma independente
-  Array.prototype.slice.call(document.querySelectorAll('.tabs')).forEach(function (grupo) {
+  Array.prototype.slice.call(document.querySelectorAll('.tabs:not([data-own])')).forEach(function (grupo) {
     var tabs = Array.prototype.slice.call(grupo.querySelectorAll('.tab'));
     function selecionar(tab) {
       tabs.forEach(function (t) {
@@ -150,6 +150,97 @@
       // ciclo() repinta o mesmo cenário limpo e agenda clique/resposta/novo giro
     }
     ciclo();
+  }
+
+  // Simulação automática (aba Imóveis de luxo): celular em perspectiva que classifica sozinho
+  var simPhone = document.getElementById('simphone');
+  var simList = document.getElementById('simlist');
+  if (simPhone && simList) {
+    var simMercado = 'Imóveis de luxo';
+    var simItens = [
+      { termo: 'decorador para apartamento de luxo', clique: 1, resp: '✓ PERDA. Termo negativado.', cls: 'r', rot: 'Negativar', why: 'Busca por serviço, não por compra de imóvel. Clique desperdiçado.' },
+      { termo: 'investimento imobiliário alto rendimento', clique: 2, resp: '✓ TESTE A/B. Termo enviado para teste.', cls: 'y', rot: 'Dúvida · testar', why: 'Pode ser fundo imobiliário ou compra direta. A pergunta vai para o WhatsApp para qualificar.' },
+      { termo: 'cobertura duplex comprar', clique: 0, resp: '✓ RELEVANTE. Termo mantido nas campanhas.', cls: 'g', rot: 'Relevante', why: 'Intenção clara de compra. Manter e otimizar o lance.' }
+    ];
+    var simOpts = [
+      { rotulo: 'RELEVANTE', cls: '' },
+      { rotulo: 'PERDA', cls: 'opt--loss' },
+      { rotulo: 'TESTE A/B', cls: 'opt--ab' }
+    ];
+    var simAtual = 0, simEstado = 0, simTimers = [], simVisivel = false;
+    var simReduz = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    // Lista de buscas (texto acessível, clicável)
+    simItens.forEach(function (it, i) {
+      var li = document.createElement('li');
+      li.innerHTML = '<button type="button" class="simitem" data-i="' + i + '">' +
+        '<span class="simitem__n">' + (i + 1) + '</span>' +
+        '<span class="simitem__body"><small>Termo pesquisado</small><b>“' + it.termo + '”</b>' +
+        '<span class="simitem__res"><span class="verdict verdict--' + it.cls + '">' + it.rot + '</span><span>' + it.why + '</span></span></span></button>';
+      simList.appendChild(li);
+    });
+    var simBtns = Array.prototype.slice.call(simList.querySelectorAll('.simitem'));
+
+    function simPinta(i, marcado, resposta) {
+      var c = simItens[i];
+      var h = '<div class="phone__notch"></div>' +
+        '<div class="phone__bar"><span class="avatar"><img src="assets/whatsapp-logo.jpg" alt=""></span><div><b>Grupo do cliente</b><small>Pocket · online</small></div></div>' +
+        '<div class="chat' + (marcado >= 0 ? ' chat--still' : '') + '">' +
+        '<div class="msg msg--mkt">' + simMercado + '</div>' +
+        '<div class="msg msg--in">Termo que acionou seu anúncio:<br>“<b>' + c.termo + '</b>”</div>' +
+        '<div class="poll"><p>Como classificar este termo?</p>';
+      simOpts.forEach(function (o, k) {
+        h += '<label class="opt ' + o.cls + (marcado === k ? ' opt--on' : '') + '"><i></i>' + o.rotulo + '</label>';
+      });
+      h += '</div>' + (resposta ? '<div class="msg msg--ok">' + c.resp + '</div>' : '') + '</div>';
+      simPhone.innerHTML = h;
+    }
+    function simMarca(i, aberto) {
+      simBtns.forEach(function (b, k) {
+        b.classList.toggle('is-active', k === i);
+        b.classList.toggle('is-done', k === i && aberto);
+        if (k === i) b.setAttribute('aria-current', 'true'); else b.removeAttribute('aria-current');
+      });
+    }
+    function simLimpa() { simTimers.forEach(clearTimeout); simTimers = []; }
+    function simLater(fn, ms) { simTimers.push(setTimeout(fn, ms)); }
+    function simCiclo() {
+      simLimpa();
+      simPinta(simAtual, -1, false); simMarca(simAtual, false);
+      if (simReduz) { simPinta(simAtual, simItens[simAtual].clique, true); simMarca(simAtual, true); return; }
+      simLater(function () { simPinta(simAtual, simItens[simAtual].clique, false); }, 1600);
+      simLater(function () { simPinta(simAtual, simItens[simAtual].clique, true); simMarca(simAtual, true); }, 2500);
+      simLater(function () {
+        simAtual = (simAtual + 1) % simItens.length;
+        if (simPhone.animate) simPhone.animate([{ opacity: 1 }, { opacity: .15 }, { opacity: 1 }], { duration: 500 });
+        simLater(simCiclo, 250);
+      }, 6500);
+    }
+    simBtns.forEach(function (b) {
+      b.addEventListener('click', function () { simAtual = +b.getAttribute('data-i'); if (simVisivel || simReduz) simCiclo(); });
+    });
+
+    // Só anima quando a seção está na tela
+    var simSec = document.getElementById('simulacao');
+    if ('IntersectionObserver' in window) {
+      new IntersectionObserver(function (en) {
+        simVisivel = en[0].isIntersecting;
+        if (simVisivel) simCiclo(); else simLimpa();
+      }, { threshold: 0.25 }).observe(simSec);
+    } else { simVisivel = true; simCiclo(); }
+    simPinta(0, -1, false); simMarca(0, false);
+
+    // Perspectiva reage ao mouse (desktop)
+    var simWrap = document.getElementById('simphone-wrap');
+    if (simWrap && !simReduz && window.matchMedia('(hover:hover)').matches) {
+      simSec.addEventListener('pointermove', function (e) {
+        var r = simWrap.getBoundingClientRect();
+        var dx = (e.clientX - (r.left + r.width / 2)) / window.innerWidth;
+        var dy = (e.clientY - (r.top + r.height / 2)) / window.innerHeight;
+        simWrap.style.setProperty('--ry', (-16 + dx * 14).toFixed(1) + 'deg');
+        simWrap.style.setProperty('--rx', (6 - dy * 10).toFixed(1) + 'deg');
+      });
+    }
   }
 
   // Gráfico do painel anima ao entrar na tela

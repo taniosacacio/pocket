@@ -292,3 +292,27 @@ input:focus,select:focus{outline:none;border-color:var(--ac2);box-shadow:0 0 0 4
 .verdict--r{color:#FF8A8A}
 .sim__cta{margin-top:40px}
 .sim__cta p{margin-bottom:14px}
+
+/* Simulação automática — celular em perspectiva */
+.tab--ico{display:inline-flex;align-items:center;gap:8px}
+.tab:disabled{cursor:not-allowed;opacity:.8}
+.tab__soon{font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:2px 8px;border-radius:99px;background:rgba(255,255,255,.1);color:var(--mut)}
+.simview{display:grid;gap:40px;align-items:center}
+.simlist{list-style:none;display:grid;gap:14px}
+.simitem{width:100%;display:flex;gap:16px;text-align:left;padding:18px 20px;border-radius:var(--r);background:var(--glass);border:1px solid var(--glass-brd);color:var(--tx);font:inherit;cursor:pointer;transition:border-color .3s,background .3s,transform .3s}
+.simitem:hover{border-color:rgba(37,211,102,.45)}
+.simitem.is-active{border-color:var(--cta);background:rgba(37,211,102,.08);transform:translateX(6px)}
+.simitem__n{flex:none;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font-weight:800;font-size:14px;background:rgba(255,255,255,.1)}
+.simitem.is-active .simitem__n{background:var(--cta);color:var(--cta-tx)}
+.simitem__body{display:flex;flex-direction:column;gap:4px;min-width:0}
+.simitem__body small{font-size:12px;color:var(--mut);letter-spacing:.04em;text-transform:uppercase}
+.simitem__body b{font-size:17px;line-height:1.35}
+.simitem__res{display:none;flex-direction:column;gap:8px;margin-top:8px;font-size:15px;color:var(--mut)}
+.simitem.is-done .simitem__res{display:flex;animation:pop .45s both}
+.simstage{position:relative;display:grid;place-items:center;min-height:620px;perspective:1400px}
+.simstage__glow{position:absolute;width:340px;height:340px;border-radius:50%;background:radial-gradient(circle,rgba(37,211,102,.35),rgba(66,133,244,.18) 55%,transparent 72%);filter:blur(30px)}
+.simphone-wrap{--rx:6deg;--ry:-16deg;position:relative;width:min(320px,80vw);transform-style:preserve-3d;transform:rotateY(var(--ry)) rotateX(var(--rx)) rotateZ(1.5deg);transition:transform .25s ease-out;animation:bob 6s ease-in-out infinite}
+.simphone{width:100%}
+@media(min-width:900px){.simview{grid-template-columns:1.05fr .95fr}}
+@media(max-width:899px){.simphone-wrap{--ry:-8deg;--rx:4deg}.simstage{min-height:600px}}
+@media(prefers-reduced-motion:reduce){.simphone-wrap{animation:none}}
