@@ -152,10 +152,11 @@
     ciclo();
   }
 
-  // Simulação automática (aba Imóveis de luxo): celular em perspectiva que classifica sozinho
+  // Simulação automática (aba Imóveis de luxo): um exemplo por vez, 7 s cada, celular estático
   var simPhone = document.getElementById('simphone');
-  var simList = document.getElementById('simlist');
-  if (simPhone && simList) {
+  var simBox = document.getElementById('simbox');
+  if (simPhone && simBox) {
+    var SIM_MS = 7000;
     var simMercado = 'Imóveis de luxo';
     var simItens = [
       { termo: 'decorador para apartamento de luxo', clique: 1, resp: '✓ PERDA. Termo negativado.', cls: 'r', rot: 'Negativar', why: 'Busca por serviço, não por compra de imóvel. Clique desperdiçado.' },
@@ -167,19 +168,15 @@
       { rotulo: 'PERDA', cls: 'opt--loss' },
       { rotulo: 'TESTE A/B', cls: 'opt--ab' }
     ];
-    var simAtual = 0, simEstado = 0, simTimers = [], simVisivel = false;
+    var simTerm = document.getElementById('simterm');
+    var simVerdict = document.getElementById('simverdict');
+    var simView = document.getElementById('sim-view');
+    var simSvg = document.getElementById('simarrow');
+    var simPath = document.getElementById('simpath');
+    var simHead = document.getElementById('simhead');
+    var simSteps = Array.prototype.slice.call(document.querySelectorAll('#simsteps .simstep'));
+    var simAtual = 0, simTimers = [], simVisivel = false, simClassificado = false;
     var simReduz = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-    // Lista de buscas (texto acessível, clicável)
-    simItens.forEach(function (it, i) {
-      var li = document.createElement('li');
-      li.innerHTML = '<button type="button" class="simitem" data-i="' + i + '">' +
-        '<span class="simitem__n">' + (i + 1) + '</span>' +
-        '<span class="simitem__body"><small>Termo pesquisado</small><b>“' + it.termo + '”</b>' +
-        '<span class="simitem__res"><span class="verdict verdict--' + it.cls + '">' + it.rot + '</span><span>' + it.why + '</span></span></span></button>';
-      simList.appendChild(li);
-    });
-    var simBtns = Array.prototype.slice.call(simList.querySelectorAll('.simitem'));
 
     function simPinta(i, marcado, resposta) {
       var c = simItens[i];
@@ -195,30 +192,66 @@
       h += '</div>' + (resposta ? '<div class="msg msg--ok">' + c.resp + '</div>' : '') + '</div>';
       simPhone.innerHTML = h;
     }
-    function simMarca(i, aberto) {
-      simBtns.forEach(function (b, k) {
+    // Seta pontilhada: da caixa do termo até a opção marcada no celular
+    function simSeta(mostrar) {
+      var op = simPhone.querySelector('.opt--on');
+      if (!mostrar || !op) { simSvg.classList.remove('is-on'); return; }
+      var v = simView.getBoundingClientRect(), b = simBox.getBoundingClientRect(), o = op.getBoundingClientRect();
+      var empilhado = b.right > o.left - 30;   // mobile: caixa acima do celular
+      var sx = empilhado ? b.left + b.width / 2 - v.left : b.right - v.left + 6;
+      var sy = empilhado ? b.bottom - v.top + 6 : b.top + b.height / 2 - v.top;
+      var ex = o.left - v.left - 10, ey = o.top + o.height / 2 - v.top;
+      var d = empilhado ? 70 : Math.max(50, (ex - sx) / 2);
+      simPath.setAttribute('d', 'M' + sx + ',' + sy + ' C' + (sx + (empilhado ? 0 : d)) + ',' + (sy + (empilhado ? d : 0)) + ' ' + (ex - d) + ',' + ey + ' ' + ex + ',' + ey);
+      simHead.setAttribute('d', 'M' + (ex + 9) + ',' + ey + ' L' + (ex - 3) + ',' + (ey - 7) + ' L' + (ex - 3) + ',' + (ey + 7) + ' Z');
+      simSvg.setAttribute('data-c', simItens[simAtual].cls);
+      simSvg.classList.add('is-on');
+    }
+    function simTexto(i, classificado) {
+      var c = simItens[i];
+      simTerm.textContent = c.termo;
+      simBox.className = 'simbox' + (classificado ? ' simbox--' + c.cls : '');
+      simVerdict.innerHTML = classificado
+        ? '<span class="verdict verdict--' + c.cls + '">' + c.rot + '</span><span>' + c.why + '</span>' : '';
+      simVerdict.classList.toggle('is-on', !!classificado);
+    }
+    function simBarras(i, anima) {
+      simSteps.forEach(function (b, k) {
+        var f = b.firstElementChild;
         b.classList.toggle('is-active', k === i);
-        b.classList.toggle('is-done', k === i && aberto);
         if (k === i) b.setAttribute('aria-current', 'true'); else b.removeAttribute('aria-current');
+        f.style.animation = 'none';
+        f.style.width = (k < i || (k === i && !anima)) ? '100%' : '0';
+        if (k === i && anima) { void f.offsetWidth; f.style.width = ''; f.style.animation = 'simfill ' + SIM_MS + 'ms linear forwards'; }
       });
     }
     function simLimpa() { simTimers.forEach(clearTimeout); simTimers = []; }
     function simLater(fn, ms) { simTimers.push(setTimeout(fn, ms)); }
     function simCiclo() {
       simLimpa();
-      simPinta(simAtual, -1, false); simMarca(simAtual, false);
-      if (simReduz) { simPinta(simAtual, simItens[simAtual].clique, true); simMarca(simAtual, true); return; }
-      simLater(function () { simPinta(simAtual, simItens[simAtual].clique, false); }, 1600);
-      simLater(function () { simPinta(simAtual, simItens[simAtual].clique, true); simMarca(simAtual, true); }, 2500);
-      simLater(function () {
+      var c = simItens[simAtual];
+      simClassificado = false;
+      simPinta(simAtual, -1, false); simTexto(simAtual, false); simSeta(false);
+      if (simReduz) {
+        simPinta(simAtual, c.clique, true); simTexto(simAtual, true); simClassificado = true; simBarras(simAtual, false);
+        requestAnimationFrame(function () { simSeta(true); });
+        return;
+      }
+      simBarras(simAtual, true);
+      simLater(function () {                       // 2 s: a IA classifica
+        simClassificado = true;
+        simPinta(simAtual, c.clique, false); simTexto(simAtual, true); simSeta(true);
+      }, 2000);
+      simLater(function () { simPinta(simAtual, c.clique, true); }, 3200);   // resposta do bot
+      simLater(function () {                       // 7 s: próximo exemplo
         simAtual = (simAtual + 1) % simItens.length;
-        if (simPhone.animate) simPhone.animate([{ opacity: 1 }, { opacity: .15 }, { opacity: 1 }], { duration: 500 });
-        simLater(simCiclo, 250);
-      }, 6500);
+        simCiclo();
+      }, SIM_MS);
     }
-    simBtns.forEach(function (b) {
+    simSteps.forEach(function (b) {
       b.addEventListener('click', function () { simAtual = +b.getAttribute('data-i'); if (simVisivel || simReduz) simCiclo(); });
     });
+    window.addEventListener('resize', function () { if (simClassificado) simSeta(true); });
 
     // Só anima quando a seção está na tela
     var simSec = document.getElementById('simulacao');
@@ -228,19 +261,7 @@
         if (simVisivel) simCiclo(); else simLimpa();
       }, { threshold: 0.25 }).observe(simSec);
     } else { simVisivel = true; simCiclo(); }
-    simPinta(0, -1, false); simMarca(0, false);
-
-    // Perspectiva reage ao mouse (desktop)
-    var simWrap = document.getElementById('simphone-wrap');
-    if (simWrap && !simReduz && window.matchMedia('(hover:hover)').matches) {
-      simSec.addEventListener('pointermove', function (e) {
-        var r = simWrap.getBoundingClientRect();
-        var dx = (e.clientX - (r.left + r.width / 2)) / window.innerWidth;
-        var dy = (e.clientY - (r.top + r.height / 2)) / window.innerHeight;
-        simWrap.style.setProperty('--ry', (-16 + dx * 14).toFixed(1) + 'deg');
-        simWrap.style.setProperty('--rx', (6 - dy * 10).toFixed(1) + 'deg');
-      });
-    }
+    simPinta(0, -1, false); simTexto(0, false); simBarras(0, false);
   }
 
   // Gráfico do painel anima ao entrar na tela

@@ -10,7 +10,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <script>if(/\/lppocket$/.test(location.pathname))location.replace(location.pathname+'/'+location.search+location.hash)</script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css?v=1791725962">
+  <link rel="stylesheet" href="style.css?v=1791726804">
 </head>
 <body>
   <a class="skip" href="#conteudo">Pular para o conteúdo</a>
@@ -156,7 +156,11 @@
         </div>
 
         <div class="simview" id="sim-view" role="tabpanel" aria-labelledby="tab-imob">
-          <ol class="simlist" id="simlist" aria-label="Buscas de exemplo"></ol>
+          <div class="simleft" id="simleft">
+            <p class="simkicker">As pessoas no Google estão buscando por:</p>
+            <div class="simbox" id="simbox"><span class="simbox__term" id="simterm"></span></div>
+            <div class="simverdict" id="simverdict" aria-live="polite"></div>
+          </div>
 
           <div class="simstage reveal" aria-hidden="true">
             <div class="simstage__glow"></div>
@@ -164,7 +168,18 @@
               <div class="phone simphone" id="simphone"></div>
             </div>
           </div>
+
+          <svg class="simarrow" id="simarrow" aria-hidden="true" focusable="false">
+            <path id="simpath" class="simarrow__line" d=""/>
+            <path id="simhead" class="simarrow__head" d=""/>
+          </svg>
         </div>
+
+        <ol class="simsteps" id="simsteps" aria-label="Exemplos de busca">
+          <li><button type="button" class="simstep" data-i="0" aria-label="Exemplo 1: decorador para apartamento de luxo"><span class="simstep__fill"></span></button></li>
+          <li><button type="button" class="simstep" data-i="1" aria-label="Exemplo 2: investimento imobiliário alto rendimento"><span class="simstep__fill"></span></button></li>
+          <li><button type="button" class="simstep" data-i="2" aria-label="Exemplo 3: cobertura duplex comprar"><span class="simstep__fill"></span></button></li>
+        </ol>
 
         <div class="center sim__cta reveal">
           <p>Quer ver uma simulação com os dados do seu site?</p>
@@ -272,7 +287,7 @@
   </footer>
 
   <div class="sticky" id="sticky"><a href="#demo" class="btn btn--block">Agendar demonstração</a></div>
-  <script src="network.js?v=1791725962"></script>
-  <script src="script.js?v=1791725962"></script>
+  <script src="network.js?v=1791726804"></script>
+  <script src="script.js?v=1791726804"></script>
 </body>
 </html>

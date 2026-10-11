@@ -293,26 +293,40 @@ input:focus,select:focus{outline:none;border-color:var(--ac2);box-shadow:0 0 0 4
 .sim__cta{margin-top:40px}
 .sim__cta p{margin-bottom:14px}
 
-/* Simulação automática — celular em perspectiva */
+/* Simulação automática — termo à esquerda, celular estático à direita */
 .tab--ico{display:inline-flex;align-items:center;gap:8px}
 .tab:disabled{cursor:not-allowed;opacity:.8}
 .tab__soon{font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:2px 8px;border-radius:99px;background:rgba(255,255,255,.1);color:var(--mut)}
-.simview{display:grid;gap:40px;align-items:center}
-.simlist{list-style:none;display:grid;gap:14px}
-.simitem{width:100%;display:flex;gap:16px;text-align:left;padding:18px 20px;border-radius:var(--r);background:var(--glass);border:1px solid var(--glass-brd);color:var(--tx);font:inherit;cursor:pointer;transition:border-color .3s,background .3s,transform .3s}
-.simitem:hover{border-color:rgba(37,211,102,.45)}
-.simitem.is-active{border-color:var(--cta);background:rgba(37,211,102,.08);transform:translateX(6px)}
-.simitem__n{flex:none;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font-weight:800;font-size:14px;background:rgba(255,255,255,.1)}
-.simitem.is-active .simitem__n{background:var(--cta);color:var(--cta-tx)}
-.simitem__body{display:flex;flex-direction:column;gap:4px;min-width:0}
-.simitem__body small{font-size:12px;color:var(--mut);letter-spacing:.04em;text-transform:uppercase}
-.simitem__body b{font-size:17px;line-height:1.35}
-.simitem__res{display:none;flex-direction:column;gap:8px;margin-top:8px;font-size:15px;color:var(--mut)}
-.simitem.is-done .simitem__res{display:flex;animation:pop .45s both}
-.simstage{position:relative;display:grid;place-items:center;min-height:620px;perspective:1400px}
-.simstage__glow{position:absolute;width:340px;height:340px;border-radius:50%;background:radial-gradient(circle,rgba(37,211,102,.35),rgba(66,133,244,.18) 55%,transparent 72%);filter:blur(30px)}
-.simphone-wrap{--rx:6deg;--ry:-16deg;position:relative;width:min(320px,80vw);transform-style:preserve-3d;transform:rotateY(var(--ry)) rotateX(var(--rx)) rotateZ(1.5deg);transition:transform .25s ease-out;animation:bob 6s ease-in-out infinite}
+.simview{position:relative;display:grid;gap:36px;align-items:center}
+.simleft{display:flex;flex-direction:column;gap:22px;max-width:520px}
+.simkicker{font-size:15px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--tx);line-height:1.5}
+.simbox{padding:26px 28px;border-radius:20px;background:var(--glass);border:2px solid var(--glass-brd);transition:border-color .5s,background .5s,box-shadow .5s}
+.simbox__term{display:block;font-size:clamp(22px,3vw,30px);font-weight:800;line-height:1.3;color:var(--tx);letter-spacing:-.01em}
+.simbox__term::before{content:"“"}.simbox__term::after{content:"”"}
+.simbox--r{border-color:#FF6B6B;background:rgba(255,107,107,.10);box-shadow:0 0 0 4px rgba(255,107,107,.14),0 0 34px rgba(255,107,107,.30)}
+.simbox--y{border-color:#FFD76A;background:rgba(255,215,106,.10);box-shadow:0 0 0 4px rgba(255,215,106,.14),0 0 34px rgba(255,215,106,.28)}
+.simbox--g{border-color:#25D366;background:rgba(37,211,102,.10);box-shadow:0 0 0 4px rgba(37,211,102,.14),0 0 34px rgba(37,211,102,.30)}
+.simverdict{display:flex;flex-direction:column;gap:10px;min-height:96px;font-size:16px;color:var(--mut);opacity:0;transform:translateY(8px);transition:opacity .5s,transform .5s}
+.simverdict.is-on{opacity:1;transform:none}
+.verdict{align-self:flex-start;display:inline-flex;align-items:center;gap:8px;padding:6px 14px;border-radius:99px;font-size:13px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;border:1px solid currentColor;background:rgba(255,255,255,.04)}
+.verdict::before{content:"";width:8px;height:8px;border-radius:50%;background:currentColor}
+.verdict--g{color:#25D366}.verdict--y{color:#FFD76A}.verdict--r{color:#FF8A8A}
+.simstage{position:relative;display:grid;place-items:center;min-height:620px}
+.simstage__glow{position:absolute;width:340px;height:340px;border-radius:50%;background:radial-gradient(circle,rgba(37,211,102,.30),rgba(66,133,244,.16) 55%,transparent 72%);filter:blur(30px)}
+.simphone-wrap{position:relative;width:min(320px,80vw)}
 .simphone{width:100%}
-@media(min-width:900px){.simview{grid-template-columns:1.05fr .95fr}}
-@media(max-width:899px){.simphone-wrap{--ry:-8deg;--rx:4deg}.simstage{min-height:600px}}
-@media(prefers-reduced-motion:reduce){.simphone-wrap{animation:none}}
+.simarrow{position:absolute;inset:0;width:100%;height:100%;overflow:visible;pointer-events:none;opacity:0;transition:opacity .5s;z-index:5}
+.simarrow.is-on{opacity:1}
+.simarrow__line{fill:none;stroke:currentColor;stroke-width:3;stroke-linecap:round;stroke-dasharray:1 9;animation:simflow 1s linear infinite}
+.simarrow__head{fill:currentColor}
+.simarrow[data-c=r]{color:#FF6B6B}.simarrow[data-c=y]{color:#FFD76A}.simarrow[data-c=g]{color:#25D366}
+@keyframes simflow{to{stroke-dashoffset:-10}}
+.simsteps{list-style:none;display:flex;gap:10px;max-width:520px;margin-top:28px}
+.simsteps li{flex:1}
+.simstep{display:block;width:100%;height:24px;padding:10px 0;border:0;background:transparent;cursor:pointer}
+.simstep::before{content:"";display:block;height:4px;border-radius:99px;background:rgba(255,255,255,.16)}
+.simstep{position:relative}
+.simstep__fill{position:absolute;left:0;top:10px;height:4px;border-radius:99px;background:var(--cta);width:0}
+@keyframes simfill{from{width:0}to{width:100%}}
+@media(min-width:900px){.simview{grid-template-columns:1fr 340px;gap:90px}.simsteps{margin-top:-20px}}
+@media(prefers-reduced-motion:reduce){.simarrow__line{animation:none}}
